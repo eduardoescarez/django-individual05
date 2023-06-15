@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from mainapp.forms import FormularioConsulta, FormularioLogin
-from mainapp.models import FormularioContactoDB
+from mainapp.forms import FormularioConsulta, FormularioLogin, FormularioAsistencia
+from mainapp.models import FormularioContactoDB, FormularioAsistenciaDB
 from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
@@ -68,17 +68,47 @@ class ContactView(TemplateView):
             mensajes = {'enviado': False, 'resultado': form.errors}
         return render(request, self.template_name, {'formulario': form, 'mensajes': mensajes, 'titulo': 'Formulario de contacto',})
 
+class SupportContactView(TemplateView):
+    template_name = 'interno/supportcontactform.html'
+
+    def get(self, request, *args, **kwargs):
+        formulario = FormularioAsistencia()
+        return render(request, self.template_name, {'formulario': formulario, 'titulo': 'Formulario de asistencia',})
+    
+    def post(self, request, *args, **kwargs):
+        form = FormularioAsistencia(request.POST)
+        mensajes = {
+            'enviado' : True,
+            'resultado': None
+        }
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            email = form.cleaned_data['email']
+            area = form.cleaned_data['area']
+            asunto = form.cleaned_data['asunto']
+            mensaje = form.cleaned_data['mensaje']
+
+            registro = FormularioAsistenciaDB(
+                nombre = nombre,
+                email = email,
+                area = area,
+                asunto = asunto,
+                mensaje = mensaje,
+            )
+            registro.save()
+            mensajes = {'enviado': True, 'resultado': 'Hemos recibido el formulario correctamente, y pronto nos pondremos en contacto.', 'titulo': 'Formulario de asistencia',}
+        else:
+            mensajes = {'enviado': False, 'resultado': form.errors}
+        return render(request, self.template_name, {'formulario': form, 'mensajes': mensajes, 'titulo': 'Formulario de asistencia',})
+
 class LoginView(TemplateView):
     template_name = 'login.html'
-    
 
     def get(self, request, *args, **kwargs):
         formulario = FormularioLogin()
-        title = 'Acceso al sitio interno'
-        return render(request, self.template_name, {'formulario': formulario, 'title': title,})
+        return render(request, self.template_name, {'formulario': formulario, 'titulo': 'Acceso al sitio Interno',})
     
     def post(self, request, *args, **kwargs):
-        title = 'Acceso al sitio interno'
         form = FormularioLogin(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -89,16 +119,14 @@ class LoginView(TemplateView):
                     login(request, user)
                     return redirect('internalindex')
             form.add_error('username', 'Se han ingresado las credenciales equivocados.')
-            return render(request, self.template_name, { 'form': form, 'title': title,})
+            return render(request, self.template_name, { 'form': form, 'titulo': 'Acceso al sitio Interno',})
         else:
-            return render(request, self.template_name, { 'form': form, 'title': title,})
+            return render(request, self.template_name, { 'form': form, 'titulo': 'Acceso al sitio Interno',})
         
 class IndexInternoView(TemplateView):
     template_name = 'interno/index.html'
     
-    
     def get(self, request, *args, **kwargs):
-        title = "Sitio Interno"
-        primer_nombre = request.user.first_name or 'Usuari@ sin nombre registrado.'
+        primer_nombre = request.user.first_name or 'usuario'
         segundo_nombre = request.user.last_name
-        return render(request, self.template_name, {'primer_nombre' : primer_nombre, 'segundo_nombre' : segundo_nombre, 'title' : title,})
+        return render(request, self.template_name, {'primer_nombre' : primer_nombre, 'segundo_nombre' : segundo_nombre, 'titulo': f'Hola {primer_nombre} {segundo_nombre} 👋',})

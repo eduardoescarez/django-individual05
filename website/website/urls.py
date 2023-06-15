@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.decorators import login_required
 from django.urls import path
-from mainapp.views import IndexView, UsersView, CreateUsersView, ContactView, LoginView, IndexInternoView
+from mainapp.views import IndexView, UsersView, CreateUsersView, ContactView, LoginView, IndexInternoView, SupportContactView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +28,6 @@ urlpatterns = [
     path('contacto', ContactView.as_view(), name='contact'),
     path('entrar', LoginView.as_view(), name="login"),
     path('salir', LogoutView.as_view(), name='logout'),
-    path('internalindex', login_required(IndexInternoView.as_view()), name='internalindex'),
-
+    path('internal/index', login_required(IndexInternoView.as_view()), name='internalindex'),
+    path('internal/support', login_required(SupportContactView.as_view()), name='supportcontact'),
 ]
