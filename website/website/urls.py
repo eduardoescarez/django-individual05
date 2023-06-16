@@ -26,8 +26,8 @@ urlpatterns = [
     path('usuarios', UsersView.as_view(), name='users'),
     path('nuevousuario', CreateUsersView.as_view(), name='newuser'),    
     path('contacto', ContactView.as_view(), name='contact'),
-    path('entrar', LoginView.as_view(), name="login"),
-    path('salir', LogoutView.as_view(), name='logout'),
+    path('login/', LoginView.as_view(), name="login"),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('internal/index', login_required(IndexInternoView.as_view()), name='internalindex'),
-    path('internal/support', login_required(SupportContactView.as_view()), name='supportcontact'),
+    path('internal/support', SupportContactView.as_view(), name='supportcontact'),
 ]

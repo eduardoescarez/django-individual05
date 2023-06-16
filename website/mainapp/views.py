@@ -5,6 +5,9 @@ from django.contrib.auth.forms import UserCreationForm
 from mainapp.forms import FormularioConsulta, FormularioLogin, FormularioAsistencia
 from mainapp.models import FormularioContactoDB, FormularioAsistenciaDB
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
 
 # Create your views here.
 
@@ -68,38 +71,6 @@ class ContactView(TemplateView):
             mensajes = {'enviado': False, 'resultado': form.errors}
         return render(request, self.template_name, {'formulario': form, 'mensajes': mensajes, 'titulo': 'Formulario de contacto',})
 
-class SupportContactView(TemplateView):
-    template_name = 'interno/supportcontactform.html'
-
-    def get(self, request, *args, **kwargs):
-        formulario = FormularioAsistencia()
-        return render(request, self.template_name, {'formulario': formulario, 'titulo': 'Formulario de asistencia',})
-    
-    def post(self, request, *args, **kwargs):
-        form = FormularioAsistencia(request.POST)
-        mensajes = {
-            'enviado' : True,
-            'resultado': None
-        }
-        if form.is_valid():
-            nombre = form.cleaned_data['nombre']
-            email = form.cleaned_data['email']
-            area = form.cleaned_data['area']
-            asunto = form.cleaned_data['asunto']
-            mensaje = form.cleaned_data['mensaje']
-
-            registro = FormularioAsistenciaDB(
-                nombre = nombre,
-                email = email,
-                area = area,
-                asunto = asunto,
-                mensaje = mensaje,
-            )
-            registro.save()
-            mensajes = {'enviado': True, 'resultado': 'Hemos recibido el formulario correctamente, y pronto nos pondremos en contacto.', 'titulo': 'Formulario de asistencia',}
-        else:
-            mensajes = {'enviado': False, 'resultado': form.errors}
-        return render(request, self.template_name, {'formulario': form, 'mensajes': mensajes, 'titulo': 'Formulario de asistencia',})
 
 class LoginView(TemplateView):
     template_name = 'login.html'
@@ -130,3 +101,38 @@ class IndexInternoView(TemplateView):
         primer_nombre = request.user.first_name or 'usuario'
         segundo_nombre = request.user.last_name
         return render(request, self.template_name, {'primer_nombre' : primer_nombre, 'segundo_nombre' : segundo_nombre, 'titulo': f'Hola {primer_nombre} {segundo_nombre} 👋',})
+
+
+class SupportContactView(TemplateView):
+    template_name = 'interno/supportcontactform.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        formulario = FormularioAsistencia()
+        return render(request, self.template_name, {'formulario': formulario, 'titulo': 'Formulario de asistencia',})
+    
+    def post(self, request, *args, **kwargs):
+        form = FormularioAsistencia(request.POST)
+        mensajes = {
+            'enviado' : True,
+            'resultado': None
+        }
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            email = form.cleaned_data['email']
+            area = form.cleaned_data['area']
+            asunto = form.cleaned_data['asunto']
+            mensaje = form.cleaned_data['mensaje']
+
+            registro = FormularioAsistenciaDB(
+                nombre = nombre,
+                email = email,
+                area = area,
+                asunto = asunto,
+                mensaje = mensaje,
+            )
+            registro.save()
+            mensajes = {'enviado': True, 'resultado': 'Hemos recibido el formulario correctamente, y pronto nos pondremos en contacto.', 'titulo': 'Formulario de asistencia',}
+        else:
+            mensajes = {'enviado': False, 'resultado': form.errors}
+        return render(request, self.template_name, {'formulario': form, 'mensajes': mensajes, 'titulo': 'Formulario de asistencia',})
