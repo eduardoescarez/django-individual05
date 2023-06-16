@@ -1,5 +1,4 @@
-# README sistema
-
+# README
 
 ## Requisitos básicos
 
@@ -17,7 +16,7 @@ Los requisitos básicos para que este proyecto funcione son:
 - urllib3 2.0.2
 
 
-## Estructura del sistema
+## Estructura del proyecto
 
 La aplicación de WebConstructores se encuentra en el directorio **mainapp** y las carpetas que lo contienen son:
 
@@ -39,9 +38,9 @@ En el directorio **website** se encuentran dos archivos que se usaron en el desa
 - settings.py : contiene las configuraciones de la aplicación
 - urls.py : contiene las rutas de la aplicación
 
-## Como usar el sistema
+## Como usar la aplicación
 
-Para usar el sistema, una vez descargada una copia del repositorio, necesita de un entorno virtual de Python, y configurarlo para que tenga todos los componentes necesarios.
+Para usar la aplicación, una vez descargada una copia del repositorio, necesita de un entorno virtual de Python, y configurarlo para que tenga todos los componentes necesarios.
 
 Para ello en Windows use las siguientes instrucciones en la línea de comandos, una vez ubicado en el directorio principal de la aplicación:
 
