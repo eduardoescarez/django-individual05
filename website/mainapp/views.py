@@ -12,20 +12,20 @@ from django.utils.decorators import method_decorator
 # Create your views here.
 
 class IndexView(TemplateView): 
-    template_name = 'index.html'
+    template_name = 'home/index.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'titulo': 'Somos WebConstructores, tú solución de desarrollo web'},)
     
 class UsersView(TemplateView):
-    template_name = 'users.html'
+    template_name = 'home/users.html'
 
     def get(self, request, *args, **kwargs):
         users = User.objects.all()
         return render(request, self.template_name, {'users': users, 'titulo' : 'Usuarios'})
     
 class CreateUsersView(TemplateView):
-    template_name = 'createusers.html'
+    template_name = 'home/createusers.html'
 
     def get(self, request, *args, **kwargs):
         formulario = UserCreationForm(request.POST)
@@ -41,7 +41,7 @@ class CreateUsersView(TemplateView):
         return render(request, self.template_name, {'formulario': formulario, 'mensajes': mensajes, 'titulo': 'Crear cuenta de usuario',})
 
 class ContactView(TemplateView):
-    template_name = 'contactform.html'
+    template_name = 'home/contactform.html'
 
     def get(self, request, *args, **kwargs):
         formulario = FormularioConsulta()
@@ -73,7 +73,7 @@ class ContactView(TemplateView):
 
 
 class LoginView(TemplateView):
-    template_name = 'login.html'
+    template_name = 'home/login.html'
 
     def get(self, request, *args, **kwargs):
         formulario = FormularioLogin()
